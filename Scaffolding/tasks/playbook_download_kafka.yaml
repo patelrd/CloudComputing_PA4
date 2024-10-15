@@ -1,0 +1,24 @@
+---
+- name: Download Kafka
+  hosts: LocalMC
+  gather_facts: no
+  tasks:
+    - name: Download Kafka from the official website
+      get_url:
+        url: https://downloads.apache.org/kafka/3.8.0/kafka_2.13-3.8.0.tgz  # Adjust version and Scala version as needed
+        dest: /tmp/kafka_2.13-3.8.0.tgz  # Destination path on your local machine
+        mode: '0644'
+
+    - name: Ensure the destination directory exists
+      file:
+        path: /opt/kafka
+        state: directory
+        mode: '0755'
+
+    - name: Extract Kafka tarball
+      unarchive:
+        src: /tmp/kafka_2.13-3.8.0.tgz
+        dest: /opt/kafka
+        remote_src: yes  # Indicates that the source file is already on the target machine
+        extra_opts:
+          - --strip-components=1

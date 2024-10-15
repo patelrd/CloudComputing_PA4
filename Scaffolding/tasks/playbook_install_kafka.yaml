@@ -1,0 +1,76 @@
+---
+- name: Secure Copy Kafka to VMs and Install
+  hosts: CloudVMs
+  become: yes
+  tasks:
+    - name: Copy Kafka from local to VMs
+      copy:
+        src: "/opt/kafka/kafka_2.13-3.1.0.tgz"
+        dest: "/opt/kafka/kafka_2.13-3.1.0.tgz"
+      register: copy_result
+      delegate_to: localhost
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /opt/kafka/kafka_2.13-3.1.0.tgz
+        dest: /opt/kafka/kafka_2.13-3.1.0.tgz
+        owner: riyapatel
+        group: foo
+        mode: '0644'
+      register: copy_result
+      delegate_to: localhost
+
+    - name: Debug copy result
+      debug:
+        var: copy_result
+        
+    - name: Ensure Kafka directory exists on VMs
+      file:
+        path: "/opt/kafka"
+        state: directory
+        mode: '0755'
+    - name: Check if the Kafka tarball exists
+      stat:
+        path: /tmp/kafka_2.13-3.8.0.tgz
+      register: kafka_tarball
+
+    - name: Extract Kafka tarball
+      unarchive:
+        src: /tmp/kafka_2.13-3.8.0.tgz
+        dest: /opt/kafka
+        remote_src: yes  # Indicates that the source file is already on the target
+
+    - name: Create Kafka logs directory
+      file:
+        path: /opt/kafka/kafka_2.13-3.8.0/logs
+        state: directory
+        mode: '0755'
+
+    - name: Ensure Kafka is executable
+      file:
+        path: "/opt/kafka/bin"
+        mode: '0755'
+        recurse: yes
+
+    # - name: Create a systemd service file for Kafka
+    #   copy:
+    #     dest: /etc/systemd/system/kafka.service
+    #     content: |
+    #       [Unit]
+    #       Description=Apache Kafka Server
+    #       After=network.target
+
+    #       [Service]
+    #       Type=simple
+    #       User=root
+    #       ExecStart=/opt/kafka/kafka_2.13-3.8.0/bin/kafka-server-start.sh /opt/kafka/kafka_2.13-3.8.0/config/server.properties
+    #       ExecStop=/opt/kafka/kafka_2.13-3.8.0/bin/kafka-server-stop.sh
+    #       Restart=on-failure
+
+    #       [Install]
+    #       WantedBy=multi-user.target
+
+    # - name: Enable and start Kafka service
+    #   systemd:
+    #     name: kafka
+    #     enabled: yes
+    #     state: started
