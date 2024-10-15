@@ -1,0 +1,40 @@
+---
+#
+# Author: Aniruddha Gokhale
+# CS4287/5287 Principles of Cloud Computing
+# Created: Fall 2024
+#
+# Purpose: 
+#    This yaml file declares the different variables. It uses
+#    a Python dictionary syntax
+#
+
+# I have already defined these two variables, which are used
+# in the master playbook.
+# @@ make sure to add the local user's username @@
+local_user: doganazli
+
+cloud_user: cc  # user on chameleon VMs is cc
+
+# @@ You have to add additional variables here that you need
+#    in the different children playbooks. This could be things
+#    like VM properties such as VM name prefix, the flavor like
+#    m1.medium, project number and all the things you need to
+#    create the VM.
+# @@
+# Variables needed for VM creation
+vm_name_prefix: "team18_vm"                  # Prefix for VM names (e.g., team_vm-1, team_vm-2)
+flavor: "m1.medium"                        # VM flavor type on Chameleon (adjust as necessary)
+project_name: "CH-822922"                  # Your Chameleon project name, as specified in clouds.yaml
+key_name: "team18-key"                 # SSH key name for accessing VMs (from your inventory)
+network_name: "CH-822922-net"                 # Placeholder for network name (adjust if you need to specify it)
+image: "CC-Ubuntu22.04"                  # Base image for VMs
+
+# SSH settings from the inventory file
+ansible_ssh_private_key_file: "/Users/doganazli/.ssh/team18-private.pem"
+ansible_ssh_common_args: '-i /Users/doganazli/.ssh/F24_BASTION.pem -o StrictHostKeyChecking=no -o ProxyCommand="ssh -W %h:%p cc@bastion"'
+
+# OpenStack cloud configuration name
+cloud: "CH-822922"                         # The name of the cloud defined in clouds.yaml
+
+...

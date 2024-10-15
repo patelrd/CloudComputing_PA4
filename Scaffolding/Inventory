@@ -1,0 +1,31 @@
+#
+# Author: Aniruddha Gokhale
+# CS4287/5287 Principles of Cloud Computing
+# Created: Fall 2024
+#
+# Purpose: 
+#    This is our Inventory file, where we define some aliases
+
+# These are the aliases referenced in the master playbook
+
+[LocalMC]
+127.0.0.1  ansible_connection=local
+
+[CloudVMs]
+# Replace the lines below with actual IP addresses of the VMs after they are created
+192.168.5.170 ansible_user=cc
+192.168.5.202 ansible_user=cc
+192.168.5.83 ansible_user=cc
+192.168.5.159 ansible_user=cc
+# 192.168.5.2 ansible_user=cc
+# 192.168.5.3 ansible_user=cc
+
+[CloudVMs:vars]
+ansible_user=cc
+ansible_connection=ssh
+ansible_ssh_private_key_file=/Users/doganazli/.ssh/team18-private.pem
+ansible_ssh_common_args='-i /Users/doganazli/.ssh/F24_BASTION.pem -o StrictHostKeyChecking=no -o ProxyCommand="ssh -W %h:%p cc@bastion"'
+
+
+
+
