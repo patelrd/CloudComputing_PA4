@@ -32,3 +32,9 @@
     name: docker
     state: started
     enabled: yes
+  
+- name: Add user to Docker group
+  ansible.builtin.user:
+    name: cc
+    groups: docker
+    append: yes
