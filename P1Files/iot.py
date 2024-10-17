@@ -75,8 +75,8 @@ def run_producer():
 
 def run_consumer():
     consumer = KafkaConsumer(
-        'images',
-        group_id='performance-consumer',
+        'predictions',
+        group_id='performance-consumer'+uuid.uuid4().hex,
         bootstrap_servers=['192.168.5.18:9092'],
         value_deserializer=lambda m: json.loads(m.decode('ascii')),
         auto_offset_reset='earliest'
