@@ -13,18 +13,18 @@
 
 [CloudVMs]
 # Replace the lines below with actual IP addresses of the VMs after they are created
-192.168.5.170 ansible_user=cc
-192.168.5.202 ansible_user=cc
-192.168.5.83 ansible_user=cc
-192.168.5.159 ansible_user=cc
+192.168.5.81 ansible_user=cc
+192.168.5.110 ansible_user=cc
+192.168.5.191 ansible_user=cc
+192.168.5.106 ansible_user=cc
 # 192.168.5.2 ansible_user=cc
 # 192.168.5.3 ansible_user=cc
 
 [CloudVMs:vars]
 ansible_user=cc
 ansible_connection=ssh
-ansible_ssh_private_key_file=/Users/doganazli/.ssh/team18-private.pem
-ansible_ssh_common_args='-i /Users/doganazli/.ssh/F24_BASTION.pem -o StrictHostKeyChecking=no -o ProxyCommand="ssh -W %h:%p cc@bastion"'
+ansible_ssh_private_key_file=/Users/riyapatel/.ssh/private-key.pem
+ansible_ssh_common_args='-i /Users/riyapatel/.ssh/F24_BASTION.pem -o StrictHostKeyChecking=no -o ProxyCommand="ssh -W %h:%p cc@bastion"'
 
 
 
