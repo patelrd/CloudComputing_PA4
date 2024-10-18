@@ -1,0 +1,20 @@
+# Use a Python base image
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy the requirements file (shared)
+COPY requirements.txt .
+
+# Install dependencies (for Kafka and any additional ML libraries)
+RUN pip install -r requirements.txt
+
+# Copy only the ML consumer code
+COPY mlConsumer.py .
+
+# Expose necessary ports
+EXPOSE 9092
+
+# Command to run the ML consumer
+CMD ["python", "mlConsumer.py"]
