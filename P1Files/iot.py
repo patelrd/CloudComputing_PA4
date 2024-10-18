@@ -14,6 +14,8 @@ import threading
 # Load CIFAR-10 dataset
 dataset = datasets.CIFAR10(root='./data', download=True, transform=transforms.ToTensor())
 
+BROKER_SERVER = '192.168.5.54:9092'
+
 sentImageTimes = {}
 
 def emulate_camera_feed():
@@ -50,14 +52,14 @@ def serialize_json(value):
 def run_producer():
     # acquire the producer
     producer = KafkaProducer(
-        bootstrap_servers="192.168.5.18:9092", 
+        bootstrap_servers=BROKER_SERVER, 
         acks=1,
         value_serializer=serialize_json  # serialize JSON to bytes
     )
 
     # send the contents 5 times after a sleep of 1 sec in between
     for i in range(5):
-        
+        print("Sending image")
         # generate the data
         data = emulate_camera_feed()
 
@@ -65,7 +67,7 @@ def run_producer():
         sentImageTimes[data.get("ID")] = time.time()
 
         # send the data under topic images
-        producer.send("images", value=data, key=key)
+        producer.send("images", value=data)
         producer.flush()
 
         # sleep 1 second
@@ -77,13 +79,13 @@ def run_consumer():
     consumer = KafkaConsumer(
         'predictions',
         group_id='performance-consumer'+uuid.uuid4().hex,
-        bootstrap_servers=['192.168.5.18:9092'],
+        bootstrap_servers=[BROKER_SERVER],
         value_deserializer=lambda m: json.loads(m.decode('ascii')),
         auto_offset_reset='earliest'
     )
 
     producer = KafkaProducer(
-        bootstrap_servers="192.168.5.18:9092", 
+        bootstrap_servers=BROKER_SERVER, 
         acks=1,
         value_serializer=serialize_json  # serialize JSON to bytes
     )
@@ -93,8 +95,9 @@ def run_consumer():
             continue
         new_data = {
             "ID": message.value.get("ID"),
-            "elapsedTime": time.time() - message.value.get("starttime")
+            "elapsedTime": time.time() - sentImageTimes[message.value.get("ID")],
         }
+        print(json.dumps(new_data))
         producer.send("performance", value=new_data)
         print("message received")
         consumer.commit()
@@ -109,5 +112,5 @@ def run_threads():
     producer_thread.join()
     consumer_thread.join()
 
-if __name__ == '__main__'():
+if __name__ == '__main__':
     run_threads()

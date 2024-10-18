@@ -13,6 +13,9 @@ import json
 
 app = Flask(__name__)
 
+BROKER_SERVER = '192.168.5.54:9092'
+ML_SERVER = "192.168.5.251"
+
 # Define the SimpleCNN model
 class SimpleCNN(nn.Module):
     def __init__(self):
@@ -97,7 +100,7 @@ def serialize_json(value):
     return json_bytes
 
 producer = KafkaProducer(
-    bootstrap_servers="192.168.5.18:9092",
+    bootstrap_servers=BROKER_SERVER,
     acks=1,
     value_serializer=serialize_json
 )
@@ -126,4 +129,4 @@ def predict():
     return jsonify({"message": "Data received"}), 200
 
 if __name__ == '__main__':
-    app.run(host="192.168.5.247", port=5000, debug=True)
+    app.run(host=ML_SERVER, port=5000, debug=True)
