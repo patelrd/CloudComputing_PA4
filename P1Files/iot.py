@@ -58,7 +58,7 @@ def run_producer():
     )
 
     # send the contents 5 times after a sleep of 1 sec in between
-    for i in range(5):
+    for i in range(20):
         print("Sending image")
         # generate the data
         data = emulate_camera_feed()

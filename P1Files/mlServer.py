@@ -105,12 +105,16 @@ producer = KafkaProducer(
     value_serializer=serialize_json
 )
 
+# Train the model
+print("Training the model...")
+train_model(model, trainloader, criterion, optimizer, num_epochs=1)
+print("Model trained!")
+
 @app.route('/predict', methods=['POST'])
 def predict():
     message = request.get_json()
     data = message.get("Data")
     print("Data received: ", data)
-    train_model(model, trainloader, criterion, optimizer)
     inferredValue = predict_from_base64(data, model)
 
     print("Inferred value: ", inferredValue)
