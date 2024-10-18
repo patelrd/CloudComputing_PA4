@@ -27,14 +27,14 @@
     state: present
     update_cache: yes
 
-# - name: Ensure Docker service is running
-#   service:
-#     name: docker
-#     state: started
-#     enabled: yes
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
   
 - name: Add user to Docker group
-  user:
+  ansible.builtin.user:
     name: cc
     groups: docker
     append: yes

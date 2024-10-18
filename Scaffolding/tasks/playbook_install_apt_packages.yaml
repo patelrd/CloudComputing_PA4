@@ -1,0 +1,40 @@
+---
+# playbook_install_apt_packages.yaml
+
+- name: "Update apt cache"
+  apt:
+    update_cache: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: "Ensure Python is installed"
+  apt:
+    name: python3
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: "Install Java for Zookeeper and Kafka"
+  apt:
+    name: openjdk-11-jdk
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: "Install required apt packages"
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker.io
+    - python3-pip
+    - python3-venv
+    - python3-dev
+    - build-essential
+    - libssl-dev
+    - libffi-dev
+    - git
+    - curl
+    - unzip
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
