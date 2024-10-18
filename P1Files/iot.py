@@ -58,7 +58,7 @@ def run_producer():
     )
 
     # send the contents 5 times after a sleep of 1 sec in between
-    for i in range(20):
+    for i in range(1000):
         print("Sending image")
         # generate the data
         data = emulate_camera_feed()
@@ -90,17 +90,26 @@ def run_consumer():
         value_serializer=serialize_json  # serialize JSON to bytes
     )
 
-    for message in consumer:
-        if message.value.get("ID") not in sentImageTimes:
-            continue
-        new_data = {
-            "ID": message.value.get("ID"),
-            "elapsedTime": time.time() - sentImageTimes[message.value.get("ID")],
-        }
-        print(json.dumps(new_data))
-        producer.send("performance", value=new_data)
-        print("message received")
-        consumer.commit()
+    # open a file to write elapsed times
+    with open('elapsed_times.txt', 'w') as f:
+        f.write("ID, ElapsedTime\n")
+
+        for message in consumer:
+            if message.value.get("ID") not in sentImageTimes:
+                continue
+            new_data = {
+                "ID": message.value.get("ID"),
+                "elapsedTime": time.time() - sentImageTimes[message.value.get("ID")],
+            }
+            
+            print(json.dumps(new_data))
+            producer.send("performance", value=new_data)
+            print("message received")
+
+            # write id and elapsed time to the file
+            f.write(f"{new_data['ID']}, {new_data['elapsedTime']}\n")
+
+            consumer.commit()
 
 def run_threads():
     producer_thread = threading.Thread(target=run_producer)
