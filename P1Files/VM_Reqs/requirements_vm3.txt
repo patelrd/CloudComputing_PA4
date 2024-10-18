@@ -1,0 +1,5 @@
+Pillow==9.3.0
+torchvision==0.19.1
+kafka-python==2.0.2
+requests==2.32.3
+six==1.16.0
