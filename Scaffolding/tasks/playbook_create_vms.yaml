@@ -1,12 +1,16 @@
 ---
-# No hosts or gather_facts here as it's defined in the master playbook
-- name: Download Kafka tarball from the official site
-  get_url:
-    url: "https://downloads.apache.org/kafka/3.8.0/kafka_2.13-3.8.0.tgz"
-    dest: "/tmp/kafka_2.13-3.8.0.tgz"
-    mode: '0755'
-  register: download_result
+# playbook_create_vms.yaml
 
-- name: Check download result
-  debug:
-    var: download_result
+- name: "Create VMs"
+  openstack.cloud.server:
+    cloud: "{{ cloud }}"
+    state: present
+    name: "{{ vm_name_prefix }}-{{ item }}"
+    flavor: "{{ flavor }}"
+    image: "{{ image }}"
+    key_name: "{{ key_name }}"
+    network: "{{ network_name }}"
+    wait: yes
+    auto_ip: false
+  register: created_vm
+  loop: "{{ range(1, 5) | list }}"  # Loop to create 4 VMs

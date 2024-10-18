@@ -1,12 +1,61 @@
 ---
-# No hosts or gather_facts here as it's defined in the master playbook
-- name: Download Kafka tarball from the official site
-  get_url:
-    url: "https://downloads.apache.org/kafka/3.8.0/kafka_2.13-3.8.0.tgz"
-    dest: "/tmp/kafka_2.13-3.8.0.tgz"
-    mode: '0755'
-  register: download_result
+# Author: Doga Nazli
+# CS4287/5287 Principles of Cloud Computing
+# Created: Fall 2024
+#
+# Purpose:
+#   This playbook checks if the required variables for VM setup are properly defined.
 
-- name: Check download result
-  debug:
-    var: download_result
+- name: "Ensure 'local_user' is defined"
+  assert:
+    that: local_user is defined
+    fail_msg: "Error: 'local_user' is not defined in variables.yaml."
+    success_msg: "'local_user' is defined as {{ local_user }}"
+
+- name: "Ensure 'cloud_user' is defined"
+  assert:
+    that: cloud_user is defined
+    fail_msg: "Error: 'cloud_user' is not defined in variables.yaml."
+    success_msg: "'cloud_user' is defined as {{ cloud_user }}"
+
+- name: "Ensure 'vm_name_prefix' is defined"
+  assert:
+    that:
+      - vm_name_prefix is defined
+    fail_msg: "Error: 'vm_name_prefix' is not defined in variables.yaml."
+    success_msg: "'vm_name_prefix' is defined as {{ vm_name_prefix }}"
+
+- name: "Ensure 'flavor' is defined"
+  assert:
+    that:
+      - flavor is defined
+    fail_msg: "Error: 'flavor' is not defined in variables.yaml."
+    success_msg: "'flavor' is defined as {{ flavor }}"
+
+- name: "Ensure 'project_name' is defined"
+  assert:
+    that:
+      - project_name is defined
+    fail_msg: "Error: 'project_name' is not defined in variables.yaml."
+    success_msg: "'project_name' is defined as {{ project_name }}"
+
+- name: "Ensure 'key_name' is defined"
+  assert:
+    that:
+      - key_name is defined
+    fail_msg: "Error: 'key_name' is not defined in variables.yaml."
+    success_msg: "'key_name' is defined as {{ key_name }}"
+
+- name: "Ensure 'network_name' is defined"
+  assert:
+    that:
+      - network_name is defined
+    fail_msg: "Error: 'network_name' is not defined in variables.yaml."
+    success_msg: "'network_name' is defined as {{ network_name }}"
+
+- name: "Ensure 'image' is defined"
+  assert:
+    that:
+      - image is defined
+    fail_msg: "Error: 'image' is not defined in variables.yaml."
+    success_msg: "'image' is defined as {{ image }}"
