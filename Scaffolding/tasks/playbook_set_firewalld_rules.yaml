@@ -42,3 +42,94 @@
   ansible.builtin.service:
     name: firewalld
     state: reloaded
+
+- name: Open port 443 for K8s secure communication
+  ansible.builtin.firewalld:
+    port: 443/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open ports 2379-2381 for etcd communication
+  ansible.builtin.firewalld:
+    port: 2379-2381/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 6443 for K8s API server
+  ansible.builtin.firewalld:
+    port: 6443/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 10250 for K8s kubelet
+  ansible.builtin.firewalld:
+    port: 10250/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 10256 for K8s kube proxy
+  ansible.builtin.firewalld:
+    port: 10256/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 10257 for K8s controller
+  ansible.builtin.firewalld:
+    port: 10257/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 10259 for K8s scheduler
+  ansible.builtin.firewalld:
+    port: 10259/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 80 for web server (if used)
+  ansible.builtin.firewalld:
+    port: 80/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 8080 for K8s RBAC
+  ansible.builtin.firewalld:
+    port: 8080/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 8285 for Flannel VXLAN (UDP)
+  ansible.builtin.firewalld:
+    port: 8285/udp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 8472 for Flannel (UDP)
+  ansible.builtin.firewalld:
+    port: 8472/udp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open port 5000 for Docker private registry
+  ansible.builtin.firewalld:
+    port: 5000/tcp
+    permanent: true
+    immediate: yes
+    state: enabled
+
+- name: Open ports 30000-30100 for application endpoints
+  ansible.builtin.firewalld:
+    port: 30000-30100/tcp
+    permanent: true
+    immediate: yes
+    state: enabled

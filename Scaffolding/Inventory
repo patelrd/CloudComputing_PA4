@@ -17,8 +17,14 @@
 192.168.5.110 ansible_user=cc
 192.168.5.191 ansible_user=cc
 192.168.5.106 ansible_user=cc
-# 192.168.5.2 ansible_user=cc
-# 192.168.5.3 ansible_user=cc
+
+[master]
+192.168.5.81 ansible_user=cc # Assign this as vm1
+
+[workers]
+192.168.5.110
+192.168.5.191
+192.168.5.106
 
 [CloudVMs:vars]
 ansible_user=cc

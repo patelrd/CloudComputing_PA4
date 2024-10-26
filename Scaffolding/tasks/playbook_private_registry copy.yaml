@@ -1,0 +1,78 @@
+# playbook_private_registry.yaml
+
+- name: "Set up Private Docker Registry on Master Node (vm1)"
+  hosts: master  # This targets only the 'master' group defined in the inventory
+  become: true
+  tasks:
+    - name: "Start Private Docker Registry Container"
+      docker_container:
+        name: private_registry
+        image: registry:2
+        state: started
+        restart_policy: always
+        published_ports:
+          - "5000:5000"
+      tags: registry
+
+  # Configure daemon.json for private registry
+  - name: "Configure Docker daemon.json with private registry mirror"
+    copy:
+      content: |
+        {
+          "exec-opts": ["native.cgroupdriver=systemd"],
+          "log-driver": "json-file",
+          "log-opts": {
+            "max-size": "100m"
+          },
+          "storage-driver": "overlay2"
+          "insecure-registries" : ["{{ hostvars[groups['master'][0]]['ansible_host'] }}:5000"]
+        }
+      dest: /etc/docker/daemon.json
+      owner: root
+      group: root
+      mode: '0644'
+    tags: registry
+
+  # Change config file
+  - name: "Insert registry mirror endpoint in config.toml"
+    lineinfile:
+      path: /etc/containerd/config.toml
+      insertafter: '[plugins."io.containerd.grpc.v1.cri".registry.mirrors]'
+      line: '      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."{{ hostvars[groups["master"][0]]["ansible_host"] }}:5000"]endpoint = ["http://{{ hostvars[groups["master"][0]]["ansible_host"] }}:5000"]'
+      state: present
+
+  # Restart containerd
+  - name: "Restart containerd"
+    service:
+      name: containerd
+      state: restarted
+    tags: registry
+
+  # Restart Docker
+  - name: "Restart Docker"
+    service:
+      name: docker
+      state: restarted
+    tags: registry
+
+  # Disable swap
+  - name: "Disable swap temporarily"
+      command: swapoff -a
+      args:
+        warn: false  # Prevents Ansible from warning about swapoff being non-idempotent
+
+    - name: "Ensure swap is disabled in /etc/fstab"
+      ansible.builtin.replace:
+        path: /etc/fstab
+        regexp: '(^.*\sswap\s.*$)'
+        replace: '# \1'
+        backup: yes  # Creates a backup of /etc/fstab in case you need to revert
+
+    - name: "Verify swap is disabled"
+      shell: free -h | grep Swap
+      register: swap_status
+      ignore_errors: yes
+
+    - name: "Print swap status"
+      debug:
+        msg: "{{ swap_status.stdout }}"

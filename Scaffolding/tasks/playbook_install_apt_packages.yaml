@@ -1,6 +1,21 @@
 ---
 # playbook_install_apt_packages.yaml
 
+- name: "Add Kubernetes apt GPG key"
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: "Add Kubernetes repository"
+  apt_repository:
+    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+    filename: kubernetes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
 - name: "Update apt cache"
   apt:
     update_cache: yes
@@ -36,5 +51,8 @@
     - git
     - curl
     - unzip
+    - kubectl
+    - kubeadm
+    - kubelet
   vars:
     ansible_python_interpreter: /usr/bin/python3
