@@ -23,7 +23,7 @@
   loop: "{{ vm_info.results }}"
   when: item.servers[0].status == "ACTIVE"
 
-  - name: "Update inventory file with master IP"
+- name: "Update inventory file with master IP"
   lineinfile:
     path: ./inventory
     insertafter: "# Replace the lines below with actual IP addresses of the VMs after they are created"

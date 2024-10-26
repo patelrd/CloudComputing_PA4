@@ -200,7 +200,7 @@
   - community.general
 
   tasks:    # the task to be performed
-  - import_tasks: tasks/playbook_setup_private_registry.yaml
+  - import_tasks: tasks/playbook_private_registry.yaml
 
 - name: "Play 8b - Setup Kubernetes"
   hosts: CloudVMs   # specified in the Inventory file

@@ -43,22 +43,22 @@
 
 # Disable swap
 - name: "Disable swap temporarily"
-    command: swapoff -a
-    args:
-      warn: false  # Prevents Ansible from warning about swapoff being non-idempotent
+  command: swapoff -a
+  args:
+    warn: false  # Prevents Ansible from warning about swapoff being non-idempotent
 
-  - name: "Ensure swap is disabled in /etc/fstab"
-    ansible.builtin.replace:
-      path: /etc/fstab
-      regexp: '(^.*\sswap\s.*$)'
-      replace: '# \1'
-      backup: yes  # Creates a backup of /etc/fstab in case you need to revert
+- name: "Ensure swap is disabled in /etc/fstab"
+  ansible.builtin.replace:
+    path: /etc/fstab
+    regexp: '(^.*\sswap\s.*$)'
+    replace: '# \1'
+    backup: yes  # Creates a backup of /etc/fstab in case you need to revert
 
-  - name: "Verify swap is disabled"
-    shell: free -h | grep Swap
-    register: swap_status
-    ignore_errors: yes
+- name: "Verify swap is disabled"
+  shell: free -h | grep Swap
+  register: swap_status
+  ignore_errors: yes
 
-  - name: "Print swap status"
-    debug:
-      msg: "{{ swap_status.stdout }}"
+- name: "Print swap status"
+  debug:
+    msg: "{{ swap_status.stdout }}"

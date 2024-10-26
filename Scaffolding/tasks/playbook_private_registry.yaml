@@ -1,0 +1,11 @@
+# playbook_private_registry.yaml
+
+- name: "Start Private Docker Registry Container"
+  docker_container:
+    name: private_registry
+    image: registry:2
+    state: started
+    restart_policy: always
+    published_ports:
+      - "5000:5000"
+  tags: registry
