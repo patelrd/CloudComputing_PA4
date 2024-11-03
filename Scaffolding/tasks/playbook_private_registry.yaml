@@ -1,7 +1,7 @@
 # playbook_private_registry.yaml
 
 - name: "Start Private Docker Registry Container"
-  docker_container:
+  community.docker.docker_container:
     name: private_registry
     image: registry:2
     state: started
