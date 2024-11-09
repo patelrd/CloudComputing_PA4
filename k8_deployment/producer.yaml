@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer
+  template:
+    metadata:
+      labels:
+        app: producer
+    spec:
+      containers:
+      - name: producer
+        image: 192.168.5.226:5000/producer-image:latest
+        env:
+        - name: BROKER_SERVER
+          value: "kafka:9092"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NUM_PRODUCERS
+          value: "1"
+        volumeMounts:
+        - mountPath: /data
+          name: elapsed-times-pvc
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: elapsed-times-pvc
+        persistentVolumeClaim:
+          claimName: elapsed-times-pvc
+      restartPolicy: Always
