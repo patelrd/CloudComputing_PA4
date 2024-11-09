@@ -16,6 +16,10 @@ dataset = datasets.CIFAR10(root='./data', download=True, transform=transforms.To
 
 BROKER_SERVER = '192.168.5.54:9092'
 
+# unique pod name for producer_id
+POD_NAME = os.getenv('POD_NAME', 'producer')
+NUM_PRODUCERS = os.getenv('NUM_PRODUCERS', '1')
+
 sentImageTimes = {}
 
 def emulate_camera_feed():
@@ -90,8 +94,10 @@ def run_consumer():
         value_serializer=serialize_json  # serialize JSON to bytes
     )
 
+    file_path = f"/data/elapsed_times_producer_{POD_NAME}_of_{NUM_PRODUCERS}.txt"
+
     # open a file to write elapsed times
-    with open('elapsed_times.txt', 'w') as f:
+    with open(filepath, 'w') as f:
         f.write("ID, ElapsedTime\n")
 
         for message in consumer:

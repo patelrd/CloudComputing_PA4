@@ -8,13 +8,13 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy only the producer code
 COPY iot.py .
 
 # Expose the necessary ports
-EXPOSE 9092  # Kafka broker port
+EXPOSE 9092 
 
 # Command to run the producer
 CMD ["python", "iot.py"]
