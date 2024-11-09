@@ -181,4 +181,42 @@
   tasks:    # the task to be performed
   - import_tasks: tasks/playbook_set_firewalld_rules.yaml
 
+#####################################################
+### Play 8: Setup Private Registry and K8s
+#####################################################
+
+- name: "Play 8a - Setup Private Registry"
+  hosts: master   # specified in the Inventory file
+  vars_files:
+    - variables.yaml
+  remote_user: "{{ cloud_user }}" # since this play operates on the cloud
+                                  # VMs, the user on those VMs is the
+                                  # cloud_user variable
+  become: true  # we set it here instead of doing per task unless
+                # there is a need to use non-sudo for any subtask
+  gather_facts: false
+  collections:
+  - ansible-base
+  - community.general
+
+  tasks:    # the task to be performed
+  - import_tasks: tasks/playbook_private_registry.yaml
+
+- name: "Play 8b - Setup Kubernetes"
+  hosts: CloudVMs   # specified in the Inventory file
+  vars_files:
+    - variables.yaml
+  remote_user: "{{ cloud_user }}" # since this play operates on the cloud
+                                  # VMs, the user on those VMs is the
+                                  # cloud_user variable
+  become: true  # we set it here instead of doing per task unless
+                # there is a need to use non-sudo for any subtask
+  gather_facts: false
+  collections:
+  - ansible-base
+  - community.general
+
+  tasks:    # the task to be performed
+  - import_tasks: tasks/playbook_setup_k8s.yaml
+
 ...

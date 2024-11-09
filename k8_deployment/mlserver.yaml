@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlserver
+  template:
+    metadata:
+      labels:
+        app: mlserver
+    spec:
+      containers:
+      - name: mlserver
+        image: 192.168.5.226:5000/mlserver-image:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlserver
+spec:
+  ports:
+  - port: 5000
+    targetPort: 5000
+  selector:
+    app: mlserver

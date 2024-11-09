@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbconsumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dbconsumer
+  template:
+    metadata:
+      labels:
+        app: dbconsumer
+    spec:
+      containers:
+      - name: dbconsumer
+        image: 192.168.5.226:5000/dbconsumer-image:latest
+        env:
+        - name: KAFKA_BROKER
+          value: "kafka:9092"
+        - name: MONGO_URI
+          value: "mongodb+srv://ryanhsullivan:tGWVn60E5ylc1btz@imagesdb.ecwkq.mongodb.net/?retryWrites=true&w=majority&appName=ImagesDB"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      restartPolicy: Always

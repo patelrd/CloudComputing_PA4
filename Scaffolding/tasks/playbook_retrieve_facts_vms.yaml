@@ -8,10 +8,32 @@
   loop: "{{ range(1, 5) | list }}"
   register: vm_info
 
+# Set master and worker IPs based on VM creation order
+- name: "Set master and worker IPs based on VM creation order"
+  set_fact:
+    master_ip: "{{ vm_info.results[0].servers[0].addresses[network_name][0]['addr'] }} ansible_user={{ cloud_user }}"
+    worker_ips: "{{ vm_info.results[1:].servers | map(attribute='0.addresses[network_name][0].addr') | list }} ansible_user={{ cloud_user }}"
+  when: item.servers[0].status == "ACTIVE"
+
 - name: "Update inventory file with VM IPs"
   lineinfile:
     path: ./inventory
     insertafter: "# Replace the lines below with actual IP addresses of the VMs after they are created"
     line: "{{ item.servers[0].addresses[network_name][0]['addr'] }} ansible_user={{ cloud_user }}"
   loop: "{{ vm_info.results }}"
+  when: item.servers[0].status == "ACTIVE"
+
+- name: "Update inventory file with master IP"
+  lineinfile:
+    path: ./inventory
+    insertafter: "# Replace the lines below with actual IP addresses of the VMs after they are created"
+    line: "{{ master_ip }} ansible_user={{ cloud_user }}"
+  when: item.servers[0].status == "ACTIVE"
+
+- name: "Update inventory file with worker IPs"
+  lineinfile:
+    path: ./inventory
+    insertafter: "[workers]"
+    line: "{{ item }} ansible_user={{ cloud_user }}"
+  loop: "{{ worker_ips }}"
   when: item.servers[0].status == "ACTIVE"
