@@ -2,7 +2,7 @@
 
 - name: "Start Private Docker Registry Container"
   community.docker.docker_container:
-    name: private_registry
+    name: priplvate_registry
     image: registry:2
     state: started
     restart_policy: always
