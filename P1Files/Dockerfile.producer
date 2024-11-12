@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY iot.py .
 
 # Expose the necessary ports
-EXPOSE 9092 
+EXPOSE 9092
 
 # Command to run the producer
 CMD ["python", "iot.py"]
