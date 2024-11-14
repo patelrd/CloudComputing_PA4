@@ -2,8 +2,8 @@ from kafka import KafkaConsumer
 import json
 import requests
 
-url = "http://192.168.5.251:5000/predict"
-BROKER_SERVER = '192.168.5.54:9092'
+url = "http://ml-server-service:5000/predict"
+BROKER_SERVER = 'kafka-service:9092'
 
 mlConsumer = KafkaConsumer(
     'images',

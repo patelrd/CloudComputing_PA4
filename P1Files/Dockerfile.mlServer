@@ -1,5 +1,5 @@
 # Use a base image with the necessary ML libraries (modify according to your needs)
-FROM tensorflow/tensorflow:2.10.0
+FROM python:3.9-slim
 
 # Set working directory
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir tensorflow==2.10.0 -r requirements.txt
 
 # Copy the inference server code and model files
 COPY mlServer.py .

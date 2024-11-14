@@ -10,15 +10,17 @@ import uuid
 import threading
 
 # NOTE: Change num.partitions=1 to 4 in kafka sever.properties file, based on number of producers expected at installation
+import os
+
+producer_id = os.getenv("PRODUCER_ID", "unknown-producer")
+filepath = f"/app/output/{producer_id}.txt"
 
 # Load CIFAR-10 dataset
 dataset = datasets.CIFAR10(root='./data', download=True, transform=transforms.ToTensor())
 
-BROKER_SERVER = '192.168.5.54:9092'
+BROKER_SERVER = 'kafka-service:9092'
 
 # unique pod name for producer_id
-POD_NAME = os.getenv('POD_NAME', 'producer')
-NUM_PRODUCERS = os.getenv('NUM_PRODUCERS', '1')
 
 sentImageTimes = {}
 
@@ -93,8 +95,6 @@ def run_consumer():
         acks=1,
         value_serializer=serialize_json  # serialize JSON to bytes
     )
-
-    file_path = f"/data/elapsed_times_producer_{POD_NAME}_of_{NUM_PRODUCERS}.txt"
 
     # open a file to write elapsed times
     with open(filepath, 'w') as f:

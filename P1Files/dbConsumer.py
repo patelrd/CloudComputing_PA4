@@ -4,7 +4,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import ssl
 
-BROKER_SERVER = '192.168.5.54:9092'
+BROKER_SERVER = 'kafka-service:9092'
 
 uri = "mongodb+srv://ryanhsullivan:tGWVn60E5ylc1btz@imagesdb.ecwkq.mongodb.net/?retryWrites=true&w=majority&appName=ImagesDB"
 # Create a new client and connect to the server

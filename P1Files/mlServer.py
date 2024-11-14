@@ -13,8 +13,7 @@ import json
 
 app = Flask(__name__)
 
-BROKER_SERVER = '192.168.5.54:9092'
-ML_SERVER = "192.168.5.251"
+BROKER_SERVER = 'kafka-service:9092'
 
 # Define the SimpleCNN model
 class SimpleCNN(nn.Module):
