@@ -1,0 +1,19 @@
+Version: apps/v1
+kind: Deployment
+metadata:
+  name: ml-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ml-server
+  template:
+    metadata:
+      labels:
+        app: ml-server
+    spec:
+      containers:
+        - name: ml-server
+          image: 192.168.5.226:5000/mlserver-image:latest
+          ports:
+            - containerPort: 5000

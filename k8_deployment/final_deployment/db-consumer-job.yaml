@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-consumer-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: db-consumer
+    spec:
+      containers:
+        - name: db-consumer
+          image: 192.168.5.226:5000/dbconsumer-image:latest
+          env:
+            - name: KAFKA_BROKER_URL
+              value: "kafka-service:9092"
+            - name: MONGODB_URI
+              value: "mongodb+srv://ryanhsullivan:tGWVn60E5ylc1btz@imagesdb.ecwkq.mongodb.net/?retryWrites=true&w=majority&appName=ImagesDB"
+          command: ["python", "dbConsumer.py"]
+      restartPolicy: Never

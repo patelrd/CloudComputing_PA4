@@ -1,0 +1,20 @@
+Version: batch/v1
+kind: Job
+metadata:
+  name: ml-consumer-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: ml-consumer
+    spec:
+      containers:
+        - name: ml-consumer
+          image: 192.168.5.226:5000/mlconsumer-image:latest
+          env:
+            - name: KAFKA_BROKER_URL
+              value: "kafka-service:9092"
+            - name: ML_SERVER_URL
+              value: "http://ml-server-service:5000"
+          command: ["python", "mlConsumer.py"]
+      restartPolicy: Never
