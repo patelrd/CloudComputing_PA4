@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-worker-deploy
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sparkWorkerApp
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: sparkWorkerApp
+    spec:
+      hostname: spark-worker-host
+      containers:
+        - name: spark-worker
+          image: 192.168.5.226:5000/spark:v3.4.0
+          ports:
+            - containerPort: 7078
+            - containerPort: 7079
+            - containerPort: 8081
+          env:
+            - name: SPARK_LOCAL_IP
+              value: "spark-worker-host" 
+            - name: SPARK_NO_DAEMONIZE
+              value: "1"
+            - name: SPARK_HOME
+              value: "/opt/spark"
+          
+          imagePullPolicy: Always
+          command: ["$(SPARK_HOME)/sbin/start-worker.sh"]
+          args: ["spark://spark-master-svc:7077", "--properties-file", "$(SPARK_HOME)/sbin/spark-config.conf"]

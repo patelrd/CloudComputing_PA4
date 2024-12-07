@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-master-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sparkMasterApp
+  minReadySeconds: 5
+
+  template:
+    metadata:
+      labels:
+        app: sparkMasterApp
+    spec:
+      hostname: spark-master-host
+      nodeSelector:
+        kubernetes.io/hostname: kubemaster
+      containers:
+      - name: spark-master
+        image: 192.168.5.226:5000/spark:v3.4.0
+        imagePullPolicy: Always
+        args:
+        - bin/spark-class
+        - org.apache.spark.deploy.master.Master
+        ports:
+        - containerPort: 7077
+        - containerPort: 8080
+        env:
+          - name: SPARK_MASTER_HOST
+            value: "192.168.5.226"
+          
+          - name: SPARK_LOCAL_IP
+            value: "spark-master-host"
+
+          - name: SPARK_NO_DAEMONIZE
+            value: "1"
+          
+          - name: SPARK_HOME
+            value: "/opt/spark"
+
+        command: ["$(SPARK_HOME)/sbin/start-master.sh"]
+        args: ["--host", "spark-master-host"]
+
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: spark-worker
+# spec:
+#   replicas: 2
+#   selector:
+#     matchLabels:
+#       app: spark
+#       role: worker
+#   template:
+#     metadata:
+#       labels:
+#         app: spark
+#         role: worker
+#     spec:
+#       containers:
+#       - name: spark-worker
+#         image: 192.168.5.226:5000/spark
+#         args:
+#         - bin/spark-class
+#         - org.apache.spark.deploy.worker.Worker
+#         - spark://spark-master:7077
+#         ports:
+#         - containerPort: 8081
