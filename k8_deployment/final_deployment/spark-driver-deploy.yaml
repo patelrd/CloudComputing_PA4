@@ -18,7 +18,7 @@ spec:
         kubernetes.io/hostname: kubemaster
       containers:
         - name: spark-driver
-          image: 192.168.5.226:5000/spark:v3.4.0
+          image: 192.168.5.248:5000/my-spark:latest
           imagePullPolicy: Always
           env:
             - name: SPARK_LOCAL_IP

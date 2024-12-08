@@ -16,7 +16,7 @@ spec:
       hostname: spark-worker-host
       containers:
         - name: spark-worker
-          image: 192.168.5.226:5000/spark:v3.4.0
+          image: 192.168.5.248:5000/my-spark:latest
           ports:
             - containerPort: 7078
             - containerPort: 7079
