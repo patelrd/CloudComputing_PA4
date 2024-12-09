@@ -16,7 +16,7 @@ spec:
       hostname: spark-driver-host
       containers:
         - name: spark-driver
-          image: 192.168.5.248:5000/my-spark:latest
+          image: patelriyad/pa4:my-spark
           imagePullPolicy: Always
           env:
             - name: SPARK_LOCAL_IP

@@ -16,7 +16,7 @@ spec:
       hostname: spark-worker-host
       containers:
         - name: spark-worker
-          image: 192.168.5.248:5000/my-spark:latest
+          image: patelriyad/pa4:my-spark
           imagePullPolicy: Always
           env:
             - name: SPARK_NO_DAEMONIZE
