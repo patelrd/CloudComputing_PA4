@@ -1,12 +1,8 @@
-# CloudComputing_PA3
-
-### Scaffolding
-The Scaffolding Folder contains the files necessary for the Ansible plays to set up and provision the VMs. It contains the master playbook which can be ran to create the VMs, install the necessary packages, and set the firewall rules. It contains all child playbooks and the structures necessary to provision the Vms.
-
-### P1Files
-The P1Files folder contains the enhanced producer logic in order to log response times. It contains details about adding an additional thread that behaves as a consumer to collect end-to-end response times that will help us determine impacts on latency as the number of producers is varied. These results are saved to files for plotting graphs to analyze latency depending on varied workloads.
-
-It also contains the code for the DB Consumer, ML Consumer, and ML Inference server. Additionally, it contains the dockerfiles used to build Docker images on each VM in order to run the files from containers.
+# CloudComputing_PA4
 
 ### K8_Deployment
 This folder contains the necessary files for the Kubernetes deployment. It specifies the yaml files for the producer and consumers and the configurations for running them.
+
+Inside of this folder: final_deployment contains the deployment files used to test our workload on our 4 VMs and large-cluster-deployment contains the files used on the larger Chameleon project. These primarily contain spark service and deployment files. 
+
+We also have Dockerfile.spark which contains the dockerfile used to build the spark image located in our home directory. mapreduce.py is also located here and contains the logic for the mapreduce functionality of this assignment.
