@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-driver-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sparkDriverApp
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: sparkDriverApp
+    spec:
+      hostname: spark-driver-host
+      containers:
+        - name: spark-driver
+          image: 192.168.5.248:5000/my-spark:latest
+          imagePullPolicy: Always
+          env:
+            - name: SPARK_LOCAL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SPARK_HOME
+              value: "/spark-3.5.3-bin-hadoop3-scala2.13"
+          ports:
+            - containerPort: 4040
+            - containerPort: 7076
+            - containerPort: 7079
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              ${SPARK_HOME}/bin/spark-submit --master spark://spark-master-svc:7077 \
+              --properties-file ${SPARK_HOME}/conf/spark-driver.conf \
+              --packages org.mongodb.spark:mongo-spark-connector_2.13:10.4.0 \
+              /opt/spark/work-dir/mapreduce.py

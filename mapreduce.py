@@ -1,23 +1,32 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, when, count
 
-# Initialize Spark session
+# Create a SparkSession with MongoDB support
 spark = SparkSession.builder \
-    .appName("InferenceErrorCount") \
-    .config("spark.mongodb.input.uri", "mongodb+srv://ryanhsullivan:tGWVn60E5ylc1btz@imagesdb.ecwkq.mongodb.net/?retryWrites=true&w=majority&appName=ImagesDB/ImagesDB.images?retryWrites=true&w=majority") \
-    .config("spark.mongodb.output.uri", "mongodb+srv://ryanhsullivan:tGWVn60E5ylc1btz@imagesdb.ecwkq.mongodb.net/?retryWrites=true&w=majority&appName=ImagesDB/ImagesDB.error_counts?retryWrites=true&w=majority") \
+    .appName("MongoDBComparison") \
+    .config("spark.mongodb.read.connection.uri", "mongodb+srv://ryanhsullivan:tGWVn60E5ylc1btz@imagesdb.ecwkq.mongodb.net/imagesdb.images") \
+    .config("spark.mongodb.write.connection.uri", "mongodb+srv://ryanhsullivan:tGWVn60E5ylc1btz@imagesdb.ecwkq.mongodb.net/imagesdb.error_counts") \
+    .config("spark.mongodb.input.partitioner", "MongoPaginateBySizePartitioner") \
+    .config("spark.mongodb.input.partitionerOptions.partitionSizeMB", "16") \
+    .config("partitionKey", "_id") \
+    .config("numberOfPartitions", "4") \
     .getOrCreate()
 
-# Load data from MongoDB
-data = spark.read.format("mongo").load()
+# Read data from the MongoDB `images` collection
+df = spark.read.format("mongodb").load()
+df = df.repartition(4)
 
-# Filter incorrect inferences
-incorrect_inferences = data.filter(data["GroundTruth"] != data["InferredValue"])
+# Compare GroundTruth and InferredValue and add a new column `IsError`
+df_with_errors = df.withColumn(
+    "IsError",
+    when(col("GroundTruth") != col("InferredValue"), 1).otherwise(0)
+)
 
-# Count incorrect inferences by producer
-results = incorrect_infereces.groupBy("ID").count()
+# Count total errors
+error_count_df = df_with_errors.groupBy().agg(count(when(col("IsError") == 1, 1)).alias("ErrorCount"))
 
-# Show results (for debugging)
-results.show()
+# Write error counts to the MongoDB `error_counts` collection
+error_count_df.write.format("mongodb").mode("overwrite").save()
 
-# Save results back to MongoDB
-results.write.format("mongo").mode("append").save()
+# Stop the SparkSession
+spark.stop()
