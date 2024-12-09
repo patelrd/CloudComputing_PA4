@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-master-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sparkMasterApp
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: sparkMasterApp
+    spec:
+      hostname: spark-master-host
+      containers:
+        - name: spark-master
+          image: 192.168.5.248:5000/my-spark:latest
+          imagePullPolicy: Always
+          env:
+            - name: SPARK_MASTER_HOST
+              value: "0.0.0.0"
+            - name: SPARK_LOCAL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SPARK_NO_DAEMONIZE
+              value: "1"
+            - name: SPARK_HOME
+              value: "/spark-3.5.3-bin-hadoop3-scala2.13"
+            - name: SPARK_MASTER_PORT
+              value: "7077"
+            - name: SPARK_MASTER_WEBUI_PORT
+              value: "8080"
+          ports:
+            - containerPort: 7077
+            - containerPort: 8080
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              ${SPARK_HOME}/sbin/start-master.sh --host 0.0.0.0 --port 7077 --webui-port 8080
